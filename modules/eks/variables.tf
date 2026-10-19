@@ -1,6 +1,6 @@
-# =========================================================
+# ============================================================
 # EKS Cluster Variables
-# =========================================================
+# ============================================================
 
 variable "cluster_name" {
   description = "Name of the Amazon EKS cluster."
@@ -12,9 +12,14 @@ variable "kubernetes_version" {
   type        = string
 }
 
-# =========================================================
+variable "cluster_role_arn" {
+  description = "ARN of the EKS cluster IAM role created by the IAM module."
+  type        = string
+}
+
+# ============================================================
 # VPC Integration
-# =========================================================
+# ============================================================
 
 variable "vpc_id" {
   description = "ID of the VPC used by the EKS cluster."
@@ -31,9 +36,9 @@ variable "private_subnet_ids" {
   }
 }
 
-# =========================================================
+# ============================================================
 # EKS API Endpoint Access
-# =========================================================
+# ============================================================
 
 variable "endpoint_private_access" {
   description = "Enable private access to the Kubernetes API endpoint."
@@ -50,8 +55,7 @@ variable "endpoint_public_access" {
 variable "endpoint_public_access_cidrs" {
   description = "IPv4 CIDRs allowed to access the public Kubernetes API endpoint."
   type        = list(string)
-
-  default = ["203.0.113.10/32"]
+  default     = ["203.0.113.10/32"]
 
   validation {
     condition     = length(var.endpoint_public_access_cidrs) > 0
@@ -59,9 +63,9 @@ variable "endpoint_public_access_cidrs" {
   }
 }
 
-# =========================================================
+# ============================================================
 # Application + Redis Node Group
-# =========================================================
+# ============================================================
 
 variable "app_redis_instance_types" {
   description = "EC2 instance types for the application and Redis node group."
@@ -87,9 +91,9 @@ variable "app_redis_node_max_size" {
   default     = 1
 }
 
-# =========================================================
+# ============================================================
 # PostgreSQL Node Group
-# =========================================================
+# ============================================================
 
 variable "postgres_instance_types" {
   description = "EC2 instance types for the PostgreSQL node group."
@@ -115,9 +119,9 @@ variable "postgres_node_max_size" {
   default     = 1
 }
 
-# =========================================================
+# ============================================================
 # Shared Node Group Configuration
-# =========================================================
+# ============================================================
 
 variable "node_capacity_type" {
   description = "Capacity type used by both managed node groups."
@@ -133,10 +137,10 @@ variable "node_capacity_type" {
 variable "node_disk_size" {
   description = "Root disk size for each worker node in GiB."
   type        = number
-  default     = 10
+  default     = 30
 
   validation {
-    condition     = var.node_disk_size >= 5
+    condition     = var.node_disk_size >= 20
     error_message = "Worker node disk size must be at least 20 GiB."
   }
 }
@@ -147,9 +151,9 @@ variable "log_retention_days" {
   default     = 7
 }
 
-# =========================================================
+# ============================================================
 # Resource Tags
-# =========================================================
+# ============================================================
 
 variable "tags" {
   description = "Tags applied to EKS resources."

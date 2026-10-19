@@ -38,8 +38,8 @@ output "cluster_security_group_id" {
 # =========================================================
 
 output "cluster_iam_role_arn" {
-  description = "IAM role ARN assumed by the EKS control plane."
-  value       = aws_iam_role.cluster.arn
+  description = "ARN of the EKS cluster IAM role managed by the IAM module."
+  value       = var.cluster_role_arn
 }
 
 output "node_iam_role_arn" {

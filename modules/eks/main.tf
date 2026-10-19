@@ -1,32 +1,4 @@
 # ---------------------------------------------------------
-# EKS Cluster IAM Role
-# ---------------------------------------------------------
-
-data "aws_iam_policy_document" "cluster_assume_role" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role" "cluster" {
-  name               = "${var.cluster_name}-cluster-role"
-  assume_role_policy = data.aws_iam_policy_document.cluster_assume_role.json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "cluster_policy" {
-  role       = aws_iam_role.cluster.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
-
-# ---------------------------------------------------------
 # CloudWatch Control-Plane Logs
 # ---------------------------------------------------------
 
@@ -43,7 +15,7 @@ resource "aws_cloudwatch_log_group" "cluster" {
 
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
-  role_arn = aws_iam_role.cluster.arn
+  role_arn = var.cluster_role_arn
   version  = var.kubernetes_version
 
   access_config {
@@ -69,7 +41,6 @@ resource "aws_eks_cluster" "this" {
   tags = var.tags
 
   depends_on = [
-    aws_iam_role_policy_attachment.cluster_policy,
     aws_cloudwatch_log_group.cluster
   ]
 

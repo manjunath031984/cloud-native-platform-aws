@@ -46,6 +46,23 @@ module "security_groups" {
 }
 
 # ============================================================
+# IAM Module
+# ============================================================
+
+module "iam" {
+  source = "./modules/iam"
+
+  # EKS Cluster IAM Role
+  cluster_name = var.eks_cluster_name
+
+  # EBS CSI Driver IAM Role
+  name_prefix = var.name
+
+  # Resource Tags
+  tags = var.tags
+}
+
+# ============================================================
 # Amazon EKS Module
 # ============================================================
 
@@ -55,6 +72,9 @@ module "eks" {
   # EKS Cluster Configuration
   cluster_name       = var.eks_cluster_name
   kubernetes_version = var.eks_kubernetes_version
+
+  # IAM Role Managed by the IAM Module
+  cluster_role_arn = module.iam.cluster_role_arn
 
   # VPC and Private Subnets
   vpc_id             = module.vpc.vpc_id
@@ -90,6 +110,21 @@ module "eks" {
   # Resource Tags
   tags = var.tags
 }
+
+# ============================================================
+# EKS Add-ons Module
+# ============================================================
+# Enable after modules/eks-addons has been implemented.
+#
+# module "eks_addons" {
+#   source = "./modules/eks-addons"
+#
+#   cluster_name            = var.eks_cluster_name
+#   kubernetes_version      = var.eks_kubernetes_version
+#   ebs_csi_driver_role_arn = module.iam.ebs_csi_driver_role_arn
+#
+#   tags = var.tags
+# }
 
 # ============================================================
 # Application Load Balancer Module
