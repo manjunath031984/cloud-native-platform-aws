@@ -122,6 +122,12 @@ resource "aws_eks_node_group" "app_redis" {
     workload = "app-redis"
   }
 
+  taint {
+    key    = "workload"
+    value  = "app-redis"
+    effect = "NO_SCHEDULE"
+  }
+
   tags = merge(var.tags, {
     Workload = "app-redis"
   })
@@ -170,6 +176,12 @@ resource "aws_eks_node_group" "postgres" {
 
   labels = {
     workload = "postgres"
+  }
+
+  taint {
+    key    = "workload"
+    value  = "postgres"
+    effect = "NO_SCHEDULE"
   }
 
   tags = merge(var.tags, {
